@@ -1,56 +1,65 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { saveFavorite } from "../storage/favorites";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function ResultScreen({ route, navigation }) {
-  const { correct, pokemon, correctAnswer } = route.params;
+  const { score } = route.params;
 
   return (
     <View style={styles.container}>
-      <Text style={correct ? styles.correct : styles.wrong}>
-        {correct ? "Você Acertou!" : "Você Errou!"}
-      </Text>
+      <Text style={styles.title}>Resultado</Text>
+      <Text style={styles.score}>{score}/10 pontos</Text>
 
-      <Image source={{ uri: pokemon.sprites.front_default }} style={styles.image} />
-
-      <Text style={styles.answer}>Resposta correta: {correctAnswer}</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Quiz")}
-      >
-        <Text style={styles.buttonText}>Próxima Pergunta</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.replace("Quiz")}>
+        <Text style={styles.buttonText}>Jogar novamente</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, styles.favButton]}
-        onPress={() =>
-          saveFavorite({
-            id: pokemon.id,
-            name: pokemon.name,
-            image: pokemon.sprites.front_default,
-          }).then(() => alert("Adicionado aos favoritos!"))
-        }
-      >
-        <Text style={styles.buttonText}>Favoritar Pergunta</Text>
+      <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate("Home")}>
+        <Text style={styles.buttonText2}>Voltar ao início</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
-  correct: { fontSize: 28, fontWeight: "800", color: "green" },
-  wrong: { fontSize: 28, fontWeight: "800", color: "red" },
-  image: { width: 140, height: 140, marginVertical: 20 },
-  answer: { fontSize: 18, marginBottom: 30 },
-  button: {
-    backgroundColor: "#ffcb05",
-    padding: 14,
-    borderRadius: 10,
-    width: "80%",
+  container: {
+    flex: 1,
+    backgroundColor: "#eef6ff",
+    justifyContent: "center",
     alignItems: "center",
-    marginVertical: 8,
+    padding: 20,
   },
-  favButton: { backgroundColor: "#3b4cca" },
-  buttonText: { fontSize: 18, fontWeight: "700", color: "#000" },
+  title: {
+    fontSize: 34,
+    fontWeight: "bold",
+    color: "#1b3a70",
+    marginBottom: 10,
+  },
+  score: {
+    fontSize: 28,
+    color: "#1b3a70",
+    marginBottom: 40,
+  },
+  button: {
+    width: "80%",
+    padding: 18,
+    backgroundColor: "#ffcc00",
+    borderRadius: 12,
+    marginBottom: 15,
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  button2: {
+    width: "80%",
+    padding: 18,
+    backgroundColor: "#2a4dff",
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText2: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
 });

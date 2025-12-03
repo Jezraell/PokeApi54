@@ -1,51 +1,97 @@
-import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { loadProgress, clearAll } from "../storage/favorites";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 export default function ProfileScreen() {
-  const [progress, setProgress] = useState({ correct: 0, wrong: 0, score: 0 });
-
-  async function load() {
-    const data = await loadProgress();
-    setProgress(data);
-  }
-
-  async function reset() {
-    await clearAll();
-    load();
-    alert("Progresso e favoritos apagados!");
-  }
-
-  useEffect(() => {
-    load();
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Seu Perfil</Text>
+      <Text style={styles.title}>Meu Perfil</Text>
 
-      <Text style={styles.item}>Acertos: {progress.correct}</Text>
-      <Text style={styles.item}>Erros: {progress.wrong}</Text>
-      <Text style={styles.item}>Pontuação: {progress.score}</Text>
+      <Image
+        source={{
+          uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+        }}
+        style={styles.avatar}
+        resizeMode="contain"
+      />
 
-      <TouchableOpacity style={styles.button} onPress={reset}>
-        <Text style={styles.buttonText}>Limpar Progresso</Text>
+      <Text style={styles.username}>Treinador Pokémon</Text>
+
+      <View style={styles.card}>
+        <Text style={styles.item}>Nível: 12</Text>
+        <Text style={styles.item}>Região favorita: Kanto</Text>
+        <Text style={styles.item}>Pokémons capturados: 27</Text>
+      </View>
+
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Editar Perfil</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity style={styles.button2}>
+        <Text style={styles.buttonText2}>Sair</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
-  title: { fontSize: 32, fontWeight: "800", marginBottom: 20 },
-  item: { fontSize: 20, marginVertical: 8 },
-  button: {
-    marginTop: 20,
-    backgroundColor: "#3b4cca",
-    padding: 14,
-    borderRadius: 10,
-    width: "80%",
+  container: {
+    flex: 1,
+    backgroundColor: "#eef6ff",
+    padding: 20,
     alignItems: "center",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  title: {
+    fontSize: 34,
+    color: "#1b3a70",
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 140,
+    height: 140,
+    marginBottom: 15,
+    opacity: 0.9,
+  },
+  username: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#1b3a70",
+    marginBottom: 30,
+  },
+  card: {
+    width: "100%",
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 14,
+    marginBottom: 25,
+    elevation: 4,
+  },
+  item: {
+    fontSize: 18,
+    marginVertical: 4,
+    color: "#333",
+  },
+  button: {
+    width: "80%",
+    padding: 18,
+    backgroundColor: "#ffcc00",
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  button2: {
+    width: "80%",
+    padding: 18,
+    backgroundColor: "#2a4dff",
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  buttonText2: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+  },
 });

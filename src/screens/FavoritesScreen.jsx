@@ -1,66 +1,115 @@
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
+import { getFavorites, removeFavorite } from "../storage/favorites";
 import { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import { listFavorites, removeFavorite } from "../storage/favorites";
 
 export default function FavoritesScreen() {
-  const [favorites, setFavorites] = useState([]);
-
-  async function load() {
-    const data = await listFavorites();
-    setFavorites(data);
-  }
-
-  async function remove(id) {
-    const updated = await removeFavorite(id);
-    setFavorites(updated);
-  }
+  const [list, setList] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = load();
-    return unsubscribe;
+    load();
   }, []);
+
+  async function load() {
+    const fav = await getFavorites();
+    setList(fav);
+  }
+
+  async function remove(item) {
+    await removeFavorite(item.id);
+    load();
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Favoritos</Text>
 
-      <FlatList
-        data={favorites}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={{ uri: item.image }} style={styles.image} />
-            <Text style={styles.name}>{item.name}</Text>
+      {list.length === 0 ? (
+        <Text style={styles.empty}>Nenhum Pokémon favoritado ainda.</Text>
+      ) : (
+        <FlatList
+          data={list}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Image
+                source={{ uri: item.image }}
+                style={styles.pokemonImage}
+                resizeMode="contain"
+              />
 
-            <TouchableOpacity style={styles.remove} onPress={() => remove(item.id)}>
-              <Text style={styles.removeText}>Remover</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        ListEmptyComponent={<Text>Nenhum favorito ainda.</Text>}
-      />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.region}>Região: {item.region}</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => remove(item)}
+              >
+                <Text style={styles.deleteText}>X</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, alignItems: "center" },
-  title: { fontSize: 32, fontWeight: "800", marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#eef6ff",
+    padding: 20,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#1b3a70",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  empty: {
+    fontSize: 18,
+    color: "#555",
+    textAlign: "center",
+    marginTop: 50,
+  },
   card: {
-    width: "100%",
-    backgroundColor: "#eee",
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 15,
+    marginBottom: 12,
+    borderRadius: 14,
+    elevation: 4,
+  },
+  pokemonImage: {
+    width: 70,
+    height: 70,
+    marginRight: 15,
+  },
+  name: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1b3a70",
+  },
+  region: {
+    color: "#444",
+    marginTop: 4,
+  },
+  deleteButton: {
+    backgroundColor: "#ff4d4d",
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: "center",
     alignItems: "center",
   },
-  image: { width: 80, height: 80 },
-  name: { fontSize: 18, fontWeight: "700", marginTop: 10 },
-  remove: {
-    marginTop: 10,
-    backgroundColor: "#ff4d4d",
-    padding: 8,
-    borderRadius: 8,
+  deleteText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
   },
-  removeText: { color: "#fff", fontWeight: "700" },
 });
